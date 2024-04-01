@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interval Timer</title>
+</head>
+<body>
+    <form>
+        <label for="rounds">Rounds</label>
+        <input type="number" id="rounds" name="rounds" value="10" />
+
+        <label for="active">Active Duration</label>
+        <input type="number" id="active" name="active" value="10" />
+
+        <label for="break">Break Duration</label>
+        <input type="number" id="break" name="break" value="5" />
+    </form>
+    
+    <button onclick="start()">Start</button>
+
+    <p id="round"></p>
+    <p id="status">Break</p>
+    <p id="timer">00:05</p>
+    
+    <script>
+        const activeSound = new Audio('377017__elmasmalo1__notification-pop.wav');
+        const pauseSound = new Audio('167127__crisstanza__pause.mp3');
+        const tickSound = new Audio('54406__korgms2000b__metronome-click.wav');
+        const round_ = document.getElementById("round");
+        const status_ = document.getElementById("status");
+        const timer_ = document.getElementById("timer");
+
+        let count = 0;
+        let rounds = 0;
+        let round = 1;
+        let activeDuration = 0;
+        let breakDuration = 0;
+        let status = "Break";
+        let id;
+
+        function start() {
+            rounds = document.getElementById("rounds").valueAsNumber;
+            activeDuration = document.getElementById("active").valueAsNumber;
+            breakDuration = document.getElementById("break").valueAsNumber;
+
+            count = breakDuration;
+            round = 1;
+            id = setInterval(tick, 1000)
+        }
+
+        function tick() {
+            if (status == "Break" && count == 0) {
+                activeSound.play();
+                status = "Active";
+                count = activeDuration;
+            } else if (status == "Active" && count == 0) {
+                pauseSound.play();
+                status = "Break"
+                count = breakDuration;
+                round++;
+            }
+
+            if (count <= 3) {
+                tickSound.play();
+            }
+
+            if (round > rounds) {
+                status = "Break";
+                count = breakDuration
+                clearInterval(id);
+                return;
+            }
+
+            status_.innerHTML = status;
+            round_.innerHTML = `Round ${round} / ${rounds}`;
+            timer_.innerHTML = `00:${String(count--).padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
